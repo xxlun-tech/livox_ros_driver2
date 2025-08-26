@@ -52,12 +52,4 @@ def generate_launch_description():
     return LaunchDescription([
         livox_driver,
         livox_rviz,
-        # launch.actions.RegisterEventHandler(
-        #     event_handler=launch.event_handlers.OnProcessExit(
-        #         target_action=livox_rviz,
-        #         on_exit=[
-        #             launch.actions.EmitEvent(event=launch.events.Shutdown()),
-        #         ]
-        #     )
-        # )
     ])
