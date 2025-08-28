@@ -27,9 +27,8 @@
 #ifndef LIVOX_ROS_DRIVER_LDS_LIDAR_H_
 #define LIVOX_ROS_DRIVER_LDS_LIDAR_H_
 
-#include <memory>
+#include <string>
 #include <mutex>
-#include <vector>
 
 #include "lds.h"
 #include "comm/comm.h"
@@ -37,12 +36,10 @@
 #include "livox_lidar_api.h"
 #include "livox_lidar_def.h"
 
-#include "rapidjson/document.h"
-
 namespace livox_ros {
 
 class LdsLidar final : public Lds {
- public:
+public:
   static LdsLidar *GetInstance(double publish_freq) {
     printf("LdsLidar *GetInstance\n");
     static LdsLidar lds_lidar(publish_freq);
@@ -53,10 +50,12 @@ class LdsLidar final : public Lds {
   bool Start();
 
   int DeInitLdsLidar(void);
- private:
+
+private:
   LdsLidar(double publish_freq);
+  virtual ~LdsLidar();
+
   LdsLidar(const LdsLidar &) = delete;
-  ~LdsLidar();
   LdsLidar &operator=(const LdsLidar &) = delete;
 
   bool ParseSummaryConfig();
@@ -70,17 +69,17 @@ class LdsLidar final : public Lds {
 
   void SetLidarPubHandle();
 
-	// auto connect mode
-	void EnableAutoConnectMode(void) { auto_connect_mode_ = true; }
+  // auto connect mode
+  void EnableAutoConnectMode(void) { auto_connect_mode_ = true; }
   void DisableAutoConnectMode(void) { auto_connect_mode_ = false; }
   bool IsAutoConnectMode(void) { return auto_connect_mode_; }
 
   virtual void PrepareExit(void);
 
- public:
+public:
   std::mutex config_mutex_;
 
- private:
+private:
   std::string path_;
   LidarSummaryInfo lidar_summary_info_;
 

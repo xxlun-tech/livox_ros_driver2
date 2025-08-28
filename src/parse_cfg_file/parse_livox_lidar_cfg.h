@@ -32,22 +32,21 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/stringbuffer.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 namespace livox_ros {
   
 class LivoxLidarConfigParser {
- public:
+public:
   explicit LivoxLidarConfigParser(const std::string& path)  : path_(path) {}
-  ~LivoxLidarConfigParser() {}
+  virtual ~LivoxLidarConfigParser() {}
 
   bool Parse(std::vector<UserLivoxLidarConfig> &lidar_configs);
 
- private:
+private:
   bool ParseUserConfigs(const rapidjson::Document &doc,
-                         std::vector<UserLivoxLidarConfig> &user_configs);
+      std::vector<UserLivoxLidarConfig> &user_configs);
   bool ParseExtrinsics(const rapidjson::Value &value, ExtParameter &param);
 
   const std::string path_;

@@ -31,16 +31,16 @@
 namespace livox_ros {
 
 class Semaphore {
- public:
+public:
   explicit Semaphore(int count = 0) : count_(count) {
   }
   void Signal();
   void Wait();
-  int GetCount() {
+  int GetCount() const {
     return count_;
   }
 
- private:
+private:
   std::mutex mutex_;
   std::condition_variable cv_;
   volatile int count_;

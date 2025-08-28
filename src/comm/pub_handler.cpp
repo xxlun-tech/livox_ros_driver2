@@ -24,10 +24,10 @@
 
 #include "pub_handler.h"
 
-#include <cstdlib>
+#include <math.h>
+#include <cstring>
 #include <chrono>
 #include <iostream>
-#include <limits>
 
 namespace livox_ros {
 
@@ -53,8 +53,6 @@ void PubHandler::Uninit() {
     point_process_thread_->joinable()) {
     point_process_thread_->join();
     point_process_thread_ = nullptr;
-  } else {
-    /* */
   }
 }
 
@@ -69,7 +67,6 @@ void PubHandler::SetPointCloudConfig(const double publish_freq) {
   if (!point_process_thread_) {
     point_process_thread_ = std::make_shared<std::thread>(&PubHandler::RawDataProcess, this);
   }
-  return;
 }
 
 void PubHandler::SetImuDataCallback(ImuDataCallback cb, void* client_data) {
@@ -126,6 +123,7 @@ void PubHandler::OnLivoxLidarPointCloudCallback(uint32_t handle, const uint8_t d
     }
     return;
   }
+
   RawPacket packet = {};
   packet.handle = handle;
   packet.lidar_type = LidarProtoType::kLivoxLidarType;
@@ -148,9 +146,7 @@ void PubHandler::OnLivoxLidarPointCloudCallback(uint32_t handle, const uint8_t d
     std::unique_lock<std::mutex> lock(self->packet_mutex_);
     self->raw_packet_queue_.push_back(packet);
   }
-    self->packet_condition_.notify_one();
-
-  return;
+  self->packet_condition_.notify_one();
 }
 
 void PubHandler::PublishPointCloud() {
@@ -158,7 +154,6 @@ void PubHandler::PublishPointCloud() {
   if (points_callback_) {
     points_callback_(&frame_, pub_client_data_);
   }
-  return;
 }
 
 void PubHandler::CheckTimer(uint32_t id) {
@@ -223,7 +218,6 @@ void PubHandler::CheckTimer(uint32_t id) {
     PublishPointCloud();
     frame_.lidar_num = 0;
   }
-  return;
 }
 
 void PubHandler::RawDataProcess() {

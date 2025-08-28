@@ -32,18 +32,17 @@
 #include "rapidjson/stringbuffer.h"
 
 #include <string>
-#include <vector>
 
 namespace livox_ros {
 
 class ParseCfgFile {
- public:
+public:
   explicit ParseCfgFile(const std::string& path);
-  ~ParseCfgFile() {}
+  virtual ~ParseCfgFile() {}
 
   bool ParseSummaryInfo(LidarSummaryInfo& lidar_summary_info);
-  
- private:
+
+private:
   const std::string path_;
 };
 

@@ -25,10 +25,7 @@
 #include "lds_lidar.h"
 
 #include <stdio.h>
-#include <string.h>
-#include <memory>
-#include <mutex>
-#include <thread>
+#include <iostream>
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -43,14 +40,10 @@
 
 #include "comm/comm.h"
 #include "comm/pub_handler.h"
-
 #include "parse_cfg_file/parse_cfg_file.h"
 #include "parse_cfg_file/parse_livox_lidar_cfg.h"
-
 #include "call_back/lidar_common_callback.h"
 #include "call_back/livox_lidar_callback.h"
-
-using namespace std;
 
 namespace livox_ros {
 
@@ -74,8 +67,6 @@ LdsLidar::~LdsLidar() {}
 
 void LdsLidar::ResetLdsLidar(void) { ResetLds(kSourceRawLidar); }
 
-
-
 bool LdsLidar::InitLdsLidar(const std::string& path_name) {
   if (is_initialized_) {
     printf("Lds is already inited!\n");
@@ -90,10 +81,12 @@ bool LdsLidar::InitLdsLidar(const std::string& path_name) {
   if (!InitLidars()) {
     return false;
   }
+
   SetLidarPubHandle();
   if (!Start()) {
     return false;
   }
+
   is_initialized_ = true;
   return true;
 }
@@ -112,7 +105,6 @@ bool LdsLidar::InitLidars() {
   return true;
 }
 
-
 bool LdsLidar::Start() {
   if (lidar_summary_info_.lidar_type & kLivoxLidarType) {
     if (!LivoxLidarStart()) {
@@ -127,9 +119,7 @@ bool LdsLidar::ParseSummaryConfig() {
 }
 
 bool LdsLidar::InitLivoxLidar() {
-#ifdef BUILDING_ROS2
   DisableLivoxSdkConsoleLogger();
-#endif
 
   // parse user config
   LivoxLidarConfigParser parser(path_);

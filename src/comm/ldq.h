@@ -25,9 +25,6 @@
 #ifndef LIVOX_ROS_DRIVER_LDQ_H_
 #define LIVOX_ROS_DRIVER_LDQ_H_
 
-#include <stdint.h>
-#include <vector>
-
 #include "comm/comm.h"
 
 namespace livox_ros {

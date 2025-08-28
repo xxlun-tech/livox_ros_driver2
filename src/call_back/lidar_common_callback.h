@@ -30,7 +30,7 @@
 namespace livox_ros {
 
 class LidarCommonCallback {
- public:
+public:
   static void OnLidarPointClounCb(PointFrame* frame, void* client_data);
   static void LidarImuDataCallback(ImuData* imu_data, void *client_data);
 };

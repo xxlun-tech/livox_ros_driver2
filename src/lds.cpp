@@ -22,12 +22,7 @@
 // SOFTWARE.
 //
 
-#include <math.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <chrono>
-#include <algorithm>
 
 #include "lds.h"
 #include "comm/ldq.h"
@@ -108,7 +103,7 @@ void Lds::StorageImuData(ImuData* imu_data) {
   uint8_t index = 0;
   int ret = cache_index_.GetIndex(imu_data->lidar_type, device_num, index);
   if (ret != 0) {
-    printf("Storage point data failed, can not get index, lidar type:%u, device_num:%u.\n", imu_data->lidar_type, device_num);
+    printf("Storage imu data failed, can not get index, lidar type:%u, device_num:%u.\n", imu_data->lidar_type, device_num);
     return;
   }
 
@@ -153,10 +148,8 @@ void Lds::StoragePointData(PointFrame* frame) {
   uint8_t lidar_number = frame->lidar_num;
   for (uint i = 0; i < lidar_number; ++i) {
     PointPacket& lidar_point = frame->lidar_point[i];
-    //printf("StoragePointData, lidar_type:%u, point_num:%lu.\n", lidar_point.lidar_type, lidar_point.points_num);
 
     uint64_t base_time = frame->base_time[i];
-
     uint8_t index = 0;
     int8_t ret = cache_index_.GetIndex(lidar_point.lidar_type, lidar_point.handle, index);
     if (ret != 0) {

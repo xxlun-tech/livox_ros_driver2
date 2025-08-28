@@ -27,7 +27,8 @@
 
 namespace livox_ros {
 
-bool LivoxLidarConfigParser::Parse(std::vector<UserLivoxLidarConfig> &lidar_configs) {
+bool LivoxLidarConfigParser::Parse(std::vector<UserLivoxLidarConfig> &lidar_configs)
+{
   FILE* raw_file = std::fopen(path_.c_str(), "rb");
   if (!raw_file) {
     std::cout << "failed to open config file: " << path_ << std::endl;
@@ -62,7 +63,8 @@ bool LivoxLidarConfigParser::Parse(std::vector<UserLivoxLidarConfig> &lidar_conf
 }
 
 bool LivoxLidarConfigParser::ParseUserConfigs(const rapidjson::Document &doc,
-                                              std::vector<UserLivoxLidarConfig> &user_configs) {
+                                              std::vector<UserLivoxLidarConfig> &user_configs)
+{
   const rapidjson::Value &lidar_configs = doc["lidar_configs"];
   for (auto &config : lidar_configs.GetArray()) {
     if (!config.HasMember("ip")) {

@@ -26,8 +26,6 @@
 
 #include "../lds_lidar.h"
 
-#include <string>
-
 namespace livox_ros {
 
 void LidarCommonCallback::OnLidarPointClounCb(PointFrame* frame, void* client_data) {

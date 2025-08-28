@@ -26,7 +26,6 @@
 #define LIVOX_DRIVER_PUB_HANDLER_H_
 
 #include <atomic>
-#include <cstring>
 #include <condition_variable> // std::condition_variable
 #include <deque>
 #include <functional>
@@ -34,6 +33,7 @@
 #include <memory>
 #include <mutex>              // std::mutex
 #include <thread>
+#include <vector>
 
 #include "livox_lidar_def.h"
 #include "livox_lidar_api.h"
@@ -42,9 +42,9 @@
 namespace livox_ros {
 
 class LidarPubHandler {
- public:
+public:
   LidarPubHandler();
-  ~ LidarPubHandler() {}
+  virtual ~LidarPubHandler() {}
 
   void PointCloudProcess(RawPacket& pkt);
   void SetLidarsExtParam(LidarExtParameter param);
@@ -54,11 +54,12 @@ class LidarPubHandler {
   uint32_t GetLidarPointCloudsSize();
   uint64_t GetLidarBaseTime();
 
- private:
+private:
   void LivoxLidarPointCloudProcess(RawPacket & pkt);
   void ProcessCartesianHighPoint(RawPacket & pkt);
   void ProcessCartesianLowPoint(RawPacket & pkt);
   void ProcessSphericalPoint(RawPacket & pkt);
+
   std::vector<PointXyzlt> points_clouds_;
   ExtParameterDetailed extrinsic_ = {
     {0, 0, 0},
@@ -73,14 +74,13 @@ class LidarPubHandler {
 };
   
 class PubHandler {
- public:
+public:
   using PointCloudsCallback = std::function<void(PointFrame*, void *)>;
   using ImuDataCallback = std::function<void(ImuData*, void*)>;
   using TimePoint = std::chrono::high_resolution_clock::time_point;
 
   PubHandler() {}
-
-  ~ PubHandler() { Uninit(); }
+  virtual ~PubHandler() { Uninit(); }
 
   void Uninit();
   void RequestExit();
@@ -91,7 +91,7 @@ class PubHandler {
   void ClearAllLidarsExtrinsicParams();
   void SetImuDataCallback(ImuDataCallback cb, void* client_data);
 
- private:
+private:
   //thread to process raw data
   void RawDataProcess();
   std::atomic<bool> is_quit_{false};
@@ -103,8 +103,8 @@ class PubHandler {
   void CheckTimer(uint32_t id);
   void PublishPointCloud();
   static void OnLivoxLidarPointCloudCallback(uint32_t handle, const uint8_t dev_type,
-                                             LivoxLidarEthernetPacket *data, void *client_data);
-  
+      LivoxLidarEthernetPacket *data, void *client_data);
+
   static bool GetLidarId(LidarProtoType lidar_type, uint32_t handle, uint32_t& id);
   static uint64_t GetEthPacketTimestamp(uint8_t timestamp_type, uint8_t* time_stamp, uint8_t size);
 

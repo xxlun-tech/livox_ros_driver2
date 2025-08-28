@@ -31,32 +31,12 @@ namespace livox_ros {
 
 class Lddc;
 
-#ifdef BUILDING_ROS1
-class DriverNode final : public ros::NodeHandle {
- public:
-  DriverNode() = default;
-  DriverNode(const DriverNode &) = delete;
-  ~DriverNode();
-  DriverNode &operator=(const DriverNode &) = delete;
-
-  DriverNode& GetNode() noexcept;
-
-  void PointCloudDataPollThread();
-  void ImuDataPollThread();
-
-  std::unique_ptr<Lddc> lddc_ptr_;
-  std::shared_ptr<std::thread> pointclouddata_poll_thread_;
-  std::shared_ptr<std::thread> imudata_poll_thread_;
-  std::shared_future<void> future_;
-  std::promise<void> exit_signal_;
-};
-
-#elif defined BUILDING_ROS2
 class DriverNode final : public rclcpp::Node {
  public:
   explicit DriverNode(const rclcpp::NodeOptions& options);
+  virtual ~DriverNode();
+
   DriverNode(const DriverNode &) = delete;
-  ~DriverNode();
   DriverNode &operator=(const DriverNode &) = delete;
 
   DriverNode& GetNode() noexcept;
@@ -71,7 +51,6 @@ class DriverNode final : public rclcpp::Node {
   std::shared_future<void> future_;
   std::promise<void> exit_signal_;
 };
-#endif
 
 } // namespace livox_ros
 

@@ -27,7 +27,6 @@
 
 #include <list>
 #include <mutex>
-#include <cstdint>
 
 namespace livox_ros {
 
@@ -60,13 +59,13 @@ typedef struct {
 } ImuData;
 
 class LidarImuDataQueue {
- public:
+public:
   void Push(ImuData* imu_data);
   bool Pop(ImuData& imu_data);
   bool Empty();
   void Clear();
 
- private:
+private:
   std::mutex mutex_;
   std::list<ImuData> imu_data_queue_;
 };

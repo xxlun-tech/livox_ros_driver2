@@ -35,34 +35,34 @@
 namespace livox_ros {
 
 class LivoxLidarCallback {
- public:
+public:
   static void LidarInfoChangeCallback(const uint32_t handle,
-                                      const LivoxLidarInfo* info,
-                                      void* client_data);
+      const LivoxLidarInfo* info,
+      void* client_data);
   static void WorkModeChangedCallback(livox_status status,
-                                      uint32_t handle,
-                                      LivoxLidarAsyncControlResponse *response,
-                                      void *client_data);
+      uint32_t handle,
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void SetDataTypeCallback(livox_status status, uint32_t handle,
-                                  LivoxLidarAsyncControlResponse *response,
-                                  void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void SetPatternModeCallback(livox_status status, uint32_t handle,
-                                     LivoxLidarAsyncControlResponse *response,
-                                     void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void SetBlindSpotCallback(livox_status status, uint32_t handle,
-                                   LivoxLidarAsyncControlResponse *response,
-                                   void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void SetDualEmitCallback(livox_status status, uint32_t handle,
-                                  LivoxLidarAsyncControlResponse *response,
-                                  void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void SetAttitudeCallback(livox_status status, uint32_t handle,
-                                  LivoxLidarAsyncControlResponse *response,
-                                  void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
   static void EnableLivoxLidarImuDataCallback(livox_status status, uint32_t handle,
-                                  LivoxLidarAsyncControlResponse *response,
-                                  void *client_data);
+      LivoxLidarAsyncControlResponse *response,
+      void *client_data);
 
- private:
+private:
   static LidarDevice* GetLidarDevice(const uint32_t handle, void* client_data);
 };
 
