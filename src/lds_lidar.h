@@ -27,41 +27,43 @@
 #ifndef LIVOX_ROS_DRIVER_LDS_LIDAR_H_
 #define LIVOX_ROS_DRIVER_LDS_LIDAR_H_
 
-#include <string>
-#include <mutex>
-
-#include "lds.h"
 #include "comm/comm.h"
-
+#include "lds.h"
 #include "livox_lidar_api.h"
 #include "livox_lidar_def.h"
 
-namespace livox_ros {
+#include <mutex>
+#include <string>
 
-class LdsLidar final : public Lds {
+namespace livox_ros
+{
+
+class LdsLidar final : public Lds
+{
 public:
-  static LdsLidar *GetInstance(double publish_freq) {
+  static LdsLidar * GetInstance(double publish_freq, bool use_sensor_time)
+  {
     printf("LdsLidar *GetInstance\n");
-    static LdsLidar lds_lidar(publish_freq);
+    static LdsLidar lds_lidar(publish_freq, use_sensor_time);
     return &lds_lidar;
   }
 
-  bool InitLdsLidar(const std::string& path_name);
+  bool InitLdsLidar(const std::string & path_name);
   bool Start();
 
   int DeInitLdsLidar(void);
 
 private:
-  LdsLidar(double publish_freq);
+  LdsLidar(double publish_freq, bool use_sensor_time);
   virtual ~LdsLidar();
 
   LdsLidar(const LdsLidar &) = delete;
-  LdsLidar &operator=(const LdsLidar &) = delete;
+  LdsLidar & operator=(const LdsLidar &) = delete;
 
   bool ParseSummaryConfig();
 
   bool InitLidars();
-  bool InitLivoxLidar();    // for new SDK
+  bool InitLivoxLidar();  // for new SDK
 
   bool LivoxLidarStart();
 
@@ -72,7 +74,7 @@ private:
   // auto connect mode
   void EnableAutoConnectMode(void) { auto_connect_mode_ = true; }
   void DisableAutoConnectMode(void) { auto_connect_mode_ = false; }
-  bool IsAutoConnectMode(void) { return auto_connect_mode_; }
+  bool IsAutoConnectMode(void) const { return auto_connect_mode_; }
 
   virtual void PrepareExit(void);
 
@@ -83,6 +85,7 @@ private:
   std::string path_;
   LidarSummaryInfo lidar_summary_info_;
 
+  bool use_sensor_time_ = false;
   bool auto_connect_mode_;
   uint32_t whitelist_count_;
   volatile bool is_initialized_;
@@ -91,4 +94,4 @@ private:
 
 }  // namespace livox_ros
 
-#endif // LIVOX_ROS_DRIVER_LDS_LIDAR_H_
+#endif  // LIVOX_ROS_DRIVER_LDS_LIDAR_H_

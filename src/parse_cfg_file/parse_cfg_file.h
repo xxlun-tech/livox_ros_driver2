@@ -26,26 +26,27 @@
 #define LIVOX_ROS_DRIVER_PARSE_CFG_FILE_H_
 
 #include "../comm/comm.h"
-
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/stringbuffer.h"
 
 #include <string>
 
-namespace livox_ros {
+namespace livox_ros
+{
 
-class ParseCfgFile {
+class ParseCfgFile
+{
 public:
-  explicit ParseCfgFile(const std::string& path);
+  explicit ParseCfgFile(const std::string & path);
   virtual ~ParseCfgFile() {}
 
-  bool ParseSummaryInfo(LidarSummaryInfo& lidar_summary_info);
+  bool ParseSummaryInfo(LidarSummaryInfo & lidar_summary_info);
 
 private:
   const std::string path_;
 };
 
-} // namespace livox_ros
+}  // namespace livox_ros
 
-#endif // LIVOX_ROS_DRIVER_PARSE_CFG_FILE_H_
+#endif  // LIVOX_ROS_DRIVER_PARSE_CFG_FILE_H_

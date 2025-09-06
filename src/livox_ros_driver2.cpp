@@ -22,15 +22,16 @@
 // SOFTWARE.
 //
 
-#include <string>
-#include <memory>
-#include <thread>
-
 #include "include/livox_ros_driver2.h"
-#include "include/ros_headers.h"
+
 #include "driver_node.h"
+#include "include/ros_headers.h"
 #include "lddc.h"
 #include "lds_lidar.h"
+
+#include <memory>
+#include <string>
+#include <thread>
 
 namespace livox_ros
 {
@@ -42,51 +43,56 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   /** Init default system parameter */
   int xfer_format = kPointCloud2Msg;
   int multi_topic = 0;
+  bool use_sensor_time = false;
   double publish_freq = 10.0; /* Hz */
-  int output_type = kOutputToRos;
   std::string frame_id;
 
   this->declare_parameter("xfer_format", xfer_format);
   this->declare_parameter("multi_topic", 0);
+  this->declare_parameter("use_sensor_time", false);
   this->declare_parameter("publish_freq", 10.0);
-  this->declare_parameter("output_data_type", output_type);
   this->declare_parameter("frame_id", "frame_default");
   this->declare_parameter("user_config_path", "path_default");
 
   this->get_parameter("xfer_format", xfer_format);
   this->get_parameter("multi_topic", multi_topic);
+  this->get_parameter("use_sensor_time", use_sensor_time);
   this->get_parameter("publish_freq", publish_freq);
-  this->get_parameter("output_data_type", output_type);
   this->get_parameter("frame_id", frame_id);
 
-  if (publish_freq > 100.0) {
+  if (publish_freq > 100.0)
+  {
     publish_freq = 100.0;
-  } else if (publish_freq < 0.5) {
+  }
+  else if (publish_freq < 0.5)
+  {
     publish_freq = 0.5;
-  } else {
-    publish_freq = publish_freq;
   }
 
   future_ = exit_signal_.get_future();
 
   /** Lidar data distribute control and lidar data source set */
-  lddc_ptr_ = std::make_unique<Lddc>(xfer_format, multi_topic, output_type, publish_freq, frame_id);
+  lddc_ptr_ = std::make_unique<Lddc>(xfer_format, multi_topic, publish_freq, frame_id);
   lddc_ptr_->SetRosNode(this);
 
   std::string user_config_path;
   this->get_parameter("user_config_path", user_config_path);
   DRIVER_INFO(*this, "Config file : %s", user_config_path.c_str());
 
-  LdsLidar *read_lidar = LdsLidar::GetInstance(publish_freq);
+  LdsLidar * read_lidar = LdsLidar::GetInstance(publish_freq, use_sensor_time);
   lddc_ptr_->RegisterLds(static_cast<Lds *>(read_lidar));
 
-  if ((read_lidar->InitLdsLidar(user_config_path))) {
+  if ((read_lidar->InitLdsLidar(user_config_path)))
+  {
     DRIVER_INFO(*this, "Init lds lidar success!");
-  } else {
+  }
+  else
+  {
     DRIVER_ERROR(*this, "Init lds lidar fail!");
   }
 
-  pointclouddata_poll_thread_ = std::make_shared<std::thread>(&DriverNode::PointCloudDataPollThread, this);
+  pointclouddata_poll_thread_ =
+    std::make_shared<std::thread>(&DriverNode::PointCloudDataPollThread, this);
   imudata_poll_thread_ = std::make_shared<std::thread>(&DriverNode::ImuDataPollThread, this);
 }
 
@@ -94,7 +100,8 @@ void DriverNode::PointCloudDataPollThread()
 {
   std::future_status status;
   std::this_thread::sleep_for(std::chrono::seconds(3));
-  do {
+  do
+  {
     lddc_ptr_->DistributePointCloudData();
     status = future_.wait_for(std::chrono::microseconds(0));
   } while (status == std::future_status::timeout);
@@ -104,7 +111,8 @@ void DriverNode::ImuDataPollThread()
 {
   std::future_status status;
   std::this_thread::sleep_for(std::chrono::seconds(3));
-  do {
+  do
+  {
     lddc_ptr_->DistributeImuData();
     status = future_.wait_for(std::chrono::microseconds(0));
   } while (status == std::future_status::timeout);

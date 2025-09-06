@@ -25,20 +25,19 @@
 #ifndef LIVOX_ROS_DRIVER_SEMAPHORE_H_
 #define LIVOX_ROS_DRIVER_SEMAPHORE_H_
 
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
 
-namespace livox_ros {
+namespace livox_ros
+{
 
-class Semaphore {
+class Semaphore
+{
 public:
-  explicit Semaphore(int count = 0) : count_(count) {
-  }
+  explicit Semaphore(int count = 0) : count_(count) {}
   void Signal();
   void Wait();
-  int GetCount() const {
-    return count_;
-  }
+  int GetCount() const { return count_; }
 
 private:
   std::mutex mutex_;
@@ -46,6 +45,6 @@ private:
   volatile int count_;
 };
 
-} // namespace livox_ros
+}  // namespace livox_ros
 
-#endif // LIVOX_ROS_DRIVER_SEMAPHORE_H_
+#endif  // LIVOX_ROS_DRIVER_SEMAPHORE_H_

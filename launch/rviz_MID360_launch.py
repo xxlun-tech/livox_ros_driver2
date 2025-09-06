@@ -5,10 +5,9 @@ from launch_ros.actions import Node
 import launch
 
 ################### user configure parameters for ros2 start ###################
-xfer_format   = 0    # 0-Pointcloud2(PointXYZRTL), 1-customized pointcloud format
+xfer_format   = 0    # 0-Pointcloud2(PointXYZRTL), 1-Pointcloud2(PointXYZIRCAEDT), 2-customized pointcloud format
 multi_topic   = 0    # 0-All LiDARs share the same topic, 1-One LiDAR one topic
 publish_freq  = 10.0 # freqency of publish, 5.0, 10.0, 20.0, 50.0, etc.
-output_type   = 0
 frame_id      = 'livox_frame'
 
 cur_path = os.path.split(os.path.realpath(__file__))[0] + '/'
@@ -21,7 +20,6 @@ livox_ros2_params = [
     {"xfer_format": xfer_format},
     {"multi_topic": multi_topic},
     {"publish_freq": publish_freq},
-    {"output_data_type": output_type},
     {"frame_id": frame_id},
     {"user_config_path": user_config_path},
 ]

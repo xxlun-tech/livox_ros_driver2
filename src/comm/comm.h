@@ -25,16 +25,16 @@
 #ifndef LIVOX_ROS_DRIVER2_COMM_H_
 #define LIVOX_ROS_DRIVER2_COMM_H_
 
+#include "lidar_imu_data_queue.h"
+
 #include <string>
 #include <vector>
 
-#include "lidar_imu_data_queue.h"
-
-namespace livox_ros {
+namespace livox_ros
+{
 
 /** Max lidar data source num */
 const uint8_t kMaxSourceLidar = 32;
-
 
 /** Eth packet relative info parama */
 const uint32_t kMaxPointPerEthPacket = 100;
@@ -44,7 +44,7 @@ const uint32_t kImuEthPacketQueueSize = 256;
 
 /** Max packet length according to Ethernet MTU */
 const uint32_t KEthPacketMaxLength = 1500;
-const uint32_t KEthPacketHeaderLength = 18;     /**< (sizeof(LivoxEthPacket) - 1) */
+const uint32_t KEthPacketHeaderLength = 18; /**< (sizeof(LivoxEthPacket) - 1) */
 const uint32_t KCartesianPointSize = 13;
 const uint32_t KSphericalPointSzie = 9;
 
@@ -54,9 +54,9 @@ const int64_t kPacketTimeGap = 1000000;           /**< 1ms = 1000000ns */
 const int64_t kMaxPacketTimeGap = 1700000;
 /**< the threshold of device disconect */
 const int64_t kDeviceDisconnectThreshold = 1000000000;
-const uint32_t kNsPerSecond = 1000000000; /**< 1s  = 1000000000ns */
+const uint32_t kNsPerSecond = 1000000000;               /**< 1s  = 1000000000ns */
 const uint32_t kNsTolerantFrameTimeDeviation = 1000000; /**< 1ms  = 1000000ns */
-const uint32_t kRatioOfMsToNs = 1000000; /**< 1ms  = 1000000ns */
+const uint32_t kRatioOfMsToNs = 1000000;                /**< 1ms  = 1000000ns */
 
 const int kPathStrMinSize = 4;   /**< Must more than 4 char */
 const int kPathStrMaxSize = 256; /**< Must less than 256 char */
@@ -72,10 +72,11 @@ constexpr uint32_t kMaxBufferSize = 0x8000;  // 32k bytes
 /** Device Line Number **/
 const uint8_t kLineNumberDefault = 1;
 const uint8_t kLineNumberMid360 = 4;
-const uint8_t kLineNumberHAP = 6;    
+const uint8_t kLineNumberHAP = 6;
 
 // SDK related
-typedef enum {
+typedef enum
+{
   kIndustryLidarType = 1,
   kVehicleLidarType = 2,
   kDirectLidarType = 4,
@@ -84,14 +85,16 @@ typedef enum {
 
 // SDK related
 /** Timestamp sync mode define. */
-typedef enum {
-  kTimestampTypeNoSync = 0, /**< No sync signal mode. */
-  kTimestampTypeGptpOrPtp = 1,    /**< gPTP or PTP sync mode */
-  kTimestampTypeGps = 2   /**< GPS sync mode. */
+typedef enum
+{
+  kTimestampTypeNoSync = 0,    /**< No sync signal mode. */
+  kTimestampTypeGptpOrPtp = 1, /**< gPTP or PTP sync mode */
+  kTimestampTypeGps = 2        /**< GPS sync mode. */
 } TimestampType;
 
 /** Lidar connect state */
-typedef enum {
+typedef enum
+{
   kConnectStateOff = 0,
   kConnectStateOn = 1,
   kConnectStateConfig = 2,
@@ -99,16 +102,22 @@ typedef enum {
 } LidarConnectState;
 
 /** Device data source type */
-typedef enum {
+typedef enum
+{
   kSourceRawLidar = 0, /**< Data from raw lidar. */
   kSourceRawHub = 1,   /**< Data from lidar hub. */
   kSourceLvxFile,      /**< Data from parse lvx file. */
   kSourceUndef,
 } LidarDataSourceType;
 
-typedef enum { kCoordinateCartesian = 0, kCoordinateSpherical } CoordinateType;
+typedef enum
+{
+  kCoordinateCartesian = 0,
+  kCoordinateSpherical
+} CoordinateType;
 
-typedef enum {
+typedef enum
+{
   kConfigDataType = 1 << 0,
   kConfigScanPattern = 1 << 1,
   kConfigBlindSpot = 1 << 2,
@@ -116,19 +125,23 @@ typedef enum {
   kConfigUnknown
 } LivoxLidarConfigCodeBit;
 
-typedef enum {
+typedef enum
+{
   kNoneExtrinsicParameter,
   kExtrinsicParameterFromLidar,
   kExtrinsicParameterFromXml
 } ExtrinsicParameterType;
 
-typedef struct {
- uint8_t lidar_type {};
+typedef struct
+{
+  uint8_t lidar_type{};
 } LidarSummaryInfo;
 
 /** 8bytes stamp to uint64_t stamp */
-typedef union {
-  struct {
+typedef union
+{
+  struct
+  {
     uint32_t low;
     uint32_t high;
   } stamp_word;
@@ -139,7 +152,8 @@ typedef union {
 
 #pragma pack(1)
 
-typedef struct {
+typedef struct
+{
   float x;            /**< X axis, Unit:m */
   float y;            /**< Y axis, Unit:m */
   float z;            /**< Z axis, Unit:m */
@@ -149,7 +163,26 @@ typedef struct {
   double timestamp;   /**< Timestamp of point*/
 } LivoxPointXyzrtlt;
 
-typedef struct {
+/**
+ * This point type is not using PCL_ADD_POINT4D to avoid the addition of a 32-bit dummy word.
+ * The fields are ordered to meet the SSE alignment.
+ */
+struct PointXYZIRCAEDT
+{
+  float x;
+  float y;
+  float z;
+  std::uint8_t intensity;
+  std::uint8_t return_type;
+  std::uint16_t channel;
+  float azimuth;
+  float elevation;
+  float distance;
+  std::uint32_t time_stamp;
+};
+
+typedef struct
+{
   float x;
   float y;
   float z;
@@ -159,22 +192,25 @@ typedef struct {
   uint64_t offset_time;
 } PointXyzlt;
 
-typedef struct {
+typedef struct
+{
   uint32_t handle;
-  uint8_t lidar_type; ////refer to LivoxLidarType
+  uint8_t lidar_type;  ////refer to LivoxLidarType
   uint32_t points_num;
-  PointXyzlt* points;
+  PointXyzlt * points;
 } PointPacket;
 
-typedef struct {
-  uint64_t base_time[kMaxSourceLidar] {};
-  uint8_t lidar_num {};
-  PointPacket lidar_point[kMaxSourceLidar] {};
+typedef struct
+{
+  uint64_t base_time[kMaxSourceLidar]{};
+  uint8_t lidar_num{};
+  PointPacket lidar_point[kMaxSourceLidar]{};
 } PointFrame;
 
 #pragma pack()
 
-typedef struct {
+typedef struct
+{
   LidarProtoType lidar_type;
   uint32_t handle;
   uint64_t base_time;
@@ -182,7 +218,8 @@ typedef struct {
   std::vector<PointXyzlt> points;
 } StoragePacket;
 
-typedef struct {
+typedef struct
+{
   LidarProtoType lidar_type;
   uint32_t handle;
   bool extrinsic_enable;
@@ -194,8 +231,9 @@ typedef struct {
   std::vector<uint8_t> raw_data;
 } RawPacket;
 
-typedef struct {
-  StoragePacket *storage_packet;
+typedef struct
+{
+  StoragePacket * storage_packet;
   volatile uint32_t rd_idx;
   volatile uint32_t wr_idx;
   uint32_t mask;
@@ -204,7 +242,8 @@ typedef struct {
 
 /*****************************/
 /* About Extrinsic Parameter */
-typedef struct {
+typedef struct
+{
   float roll;  /**< Roll angle, unit: degree. */
   float pitch; /**< Pitch angle, unit: degree. */
   float yaw;   /**< Yaw angle, unit: degree. */
@@ -216,19 +255,22 @@ typedef struct {
 typedef float TranslationVector[3]; /**< x, y, z translation, unit: mm. */
 typedef float RotationMatrix[3][3];
 
-typedef struct {
+typedef struct
+{
   TranslationVector trans;
   RotationMatrix rotation;
 } ExtParameterDetailed;
 
-typedef struct {
+typedef struct
+{
   LidarProtoType lidar_type;
   uint32_t handle;
   ExtParameter param;
 } LidarExtParameter;
 
 /** Configuration in json config file for livox lidar */
-typedef struct {
+typedef struct
+{
   char broadcast_code[16];
   bool enable_connect;
   bool enable_fan;
@@ -239,10 +281,11 @@ typedef struct {
   bool enable_high_sensitivity;
 } UserRawConfig;
 
-typedef struct {
+typedef struct
+{
   bool enable_fan;
   uint32_t return_mode;
-  uint32_t coordinate;              /**< 0 for CartesianCoordinate; others for SphericalCoordinate. */
+  uint32_t coordinate; /**< 0 for CartesianCoordinate; others for SphericalCoordinate. */
   uint32_t imu_rate;
   uint32_t extrinsic_parameter_source;
   bool enable_high_sensitivity;
@@ -250,7 +293,8 @@ typedef struct {
   volatile uint32_t get_bits;
 } UserConfig;
 
-typedef struct {
+typedef struct
+{
   uint32_t handle;
   int8_t pcl_data_type;
   int8_t pattern_mode;
@@ -262,14 +306,15 @@ typedef struct {
 } UserLivoxLidarConfig;
 
 /** Lidar data source info abstract */
-typedef struct {
+typedef struct
+{
   uint8_t lidar_type;
   uint32_t handle;
   // union {
   //   uint8_t slot : 4; //slot for LivoxLidarType::kVehicleLidarType
   //   uint8_t handle : 4;  // handle for LivoxLidarType::kIndustryLidarType
   // };
-  uint8_t data_src;                  /**< From raw lidar or livox file. */
+  uint8_t data_src; /**< From raw lidar or livox file. */
   volatile LidarConnectState connect_state;
   // DeviceInfo info;
 
@@ -285,12 +330,12 @@ constexpr uint32_t kDeviceTypeLidarMid70 = 6;
 
 /***********************************/
 /* Global function for general use */
-bool IsFilePathValid(const char *path_str);
+bool IsFilePathValid(const char * path_str);
 uint32_t CalculatePacketQueueSize(const double publish_freq);
 std::string IpNumToString(uint32_t ip_num);
 uint32_t IpStringToNum(std::string ip_string);
 std::string ReplacePeriodByUnderline(std::string str);
 
-} // namespace livox_ros
+}  // namespace livox_ros
 
-#endif // LIVOX_ROS_DRIVER2_COMM_H_
+#endif  // LIVOX_ROS_DRIVER2_COMM_H_
